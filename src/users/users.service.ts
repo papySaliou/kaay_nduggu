@@ -33,6 +33,20 @@ export class UsersService {
     if (!user) throw new NotFoundException('Utilisateur non trouvé');
     return user;
   }
+  async findByEmail(email: string): Promise<User> {
+  const user = await this.usersRepo.findOne({ 
+    where: { email }, 
+    relations: ['producteurInfo', 'clientInfo', 'products', 'commandes']
+  });
+  if (!user) throw new NotFoundException('Utilisateur non trouvé');
+  return user;
+}
+
+async create(data: Partial<User>): Promise<User> {
+  const user = this.usersRepo.create(data);
+  return this.usersRepo.save(user);
+}
+
 
   // Met à jour les infos user
   async update(id: string, data: Partial<User>) {

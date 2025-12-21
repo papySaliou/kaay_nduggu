@@ -1,32 +1,67 @@
-// import { IsEmail, IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
-// export class InscriptionDto {
-//   @IsString()
-//   name: string;
+export enum UserRole {
+  PRODUCER = 'producer',
+  CLIENT = 'client',
+}
 
-//   @IsEmail()
-//   email: string;
+/* ---------- Producteur ---------- */
+class ProducteurInfoDto {
+  @IsString()
+  zone: string;
 
-//   @IsString()
-//   phone: string;
+  @IsString()
+  farmName: string;
 
-//   @MinLength(6)
-//   password: string;
+  @IsOptional()
+  surfaceHa?: number;
+}
 
-//   @IsEnum(['producer', 'client'])
-//   role: 'producer' | 'client';
+/* ---------- Client ---------- */
+class ClientInfoDto {
+  @IsEnum(['restaurant', 'particulier'])
+  type: 'restaurant' | 'particulier';
 
-//   @IsOptional()
-//   producteurInfo?: {
-//     zone: string;
-//     farmName: string;
-//     surfaceHa?: number;
-//   };
+  @IsString()
+  address: string;
 
-//   @IsOptional()
-//   clientInfo?: {
-//     type: 'restaurant' | 'particulier';
-//     address: string;
-//     companyName?: string;
-//   };
-// }
+  @IsOptional()
+  @IsString()
+  companyName?: string;
+}
+
+/* ---------- Inscription ---------- */
+export class InscriptionDto {
+  @IsString()
+  name: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  phone: string;
+
+  @MinLength(6)
+  password: string;
+
+  @IsEnum(UserRole)
+  role: UserRole;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ProducteurInfoDto)
+  producteurInfo?: ProducteurInfoDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ClientInfoDto)
+  clientInfo?: ClientInfoDto;
+}

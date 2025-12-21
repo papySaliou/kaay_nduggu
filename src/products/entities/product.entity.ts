@@ -33,7 +33,7 @@ export class Product {
 
   @CreateDateColumn()
   createdAt: Date;
-  phone: string;
+
 
   @Column({ length: 50 })
   zone: string; // "Niayes", "Gandiol", etc.
