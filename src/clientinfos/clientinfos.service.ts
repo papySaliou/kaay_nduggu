@@ -14,7 +14,8 @@ export class ClientinfosService {
 
   async create(createClientinfoDto: CreateClientinfoDto): Promise<Clientinfo> {
     const newClientinfo = this.clientinfoRepository.create(createClientinfoDto);
-    return await this.clientinfoRepository.save(newClientinfo);
+    const saved = await this.clientinfoRepository.save(newClientinfo);
+    return saved as Clientinfo;
   }
 
   async findOne(id: string): Promise<Clientinfo> {

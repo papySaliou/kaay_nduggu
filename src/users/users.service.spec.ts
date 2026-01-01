@@ -1,12 +1,47 @@
+// import { Test, TestingModule } from '@nestjs/testing';
+// import { UsersService } from './users.service';
+
+// describe('UsersService', () => {
+//   let service: UsersService;
+
+//   beforeEach(async () => {
+//     const module: TestingModule = await Test.createTestingModule({
+//       providers: [UsersService],
+//     }).compile();
+
+//     service = module.get<UsersService>(UsersService);
+//   });
+
+//   it('should be defined', () => {
+//     expect(service).toBeDefined();
+//   });
+// });
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Producteur } from 'src/producteur/entities/producteur.entity';
+import { Clientinfo } from 'src/clientinfos/entities/clientinfo.entity';
 
 describe('UsersService', () => {
   let service: UsersService;
 
+  const mockRepo = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+    remove: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
+      providers: [
+        UsersService,
+        { provide: getRepositoryToken(User), useValue: mockRepo },
+        { provide: getRepositoryToken(Producteur), useValue: mockRepo },
+        { provide: getRepositoryToken(Clientinfo), useValue: mockRepo },
+      ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);

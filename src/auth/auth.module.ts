@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
-import { UsersModule } from 'src/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Producteur } from 'src/producteur/entities/producteur.entity';
@@ -17,18 +15,24 @@ import { ConfigService } from '@nestjs/config';
   imports: [
     TypeOrmModule.forFeature([User, Producteur, Clientinfo]),
     PassportModule,
-    JwtModule.register({
-      secret: 'SECRET_KEY',
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory:(config:ConfigService) => ({
+        secret : config.get<string>('JWT_SECRET') 
+        || 'fallback-secret-key-change-in-production',
+        signOptions: {
+          expiresIn: Number(config.get<string>('JWT_EXPIRES_IN')) 
+          || 86400,
+        }
+      }),
     }),
     // JwtModule.registerAsync({
     //   inject: [ConfigService],
     //   useFactory: (config: ConfigService) => ({
-    //     secret: config.get<string>('JWT_SECRET'),
-    //     signOptions: { expiresIn: config.get<string>('JWT_EXPIRES_IN') },
+    //     secret: config.get<string>('JWT_SECRET') || 'fallback-secret-key-change-in-production',
+    //     signOptions: { expiresIn: config.get<string>('JWT_EXPIRES_IN') || '1d' },
     //   }),
     // }),
-    // UsersModule,
   ],
   providers: [AuthService, JwtStrategy, RolesGuard],
   controllers: [AuthController],

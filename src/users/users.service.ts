@@ -42,22 +42,76 @@ export class UsersService {
   return user;
 }
 
-async create(data: Partial<User>): Promise<User> {
-  const user = this.usersRepo.create(data);
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.findOne(id);
+    Object.assign(user, updateUserDto);
+    return this.usersRepo.save(user);
+  }
+
+  async remove(id: string): Promise<{ message: string }> {
+    const user = await this.findOne(id);
+    await this.usersRepo.remove(user);
+    return { message: `Utilisateur avec l'ID ${id} supprimé.` };
+  }
+
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+  const { role, clientInfo, producteurInfo, ...userData } = createUserDto;
+
+  const user = this.usersRepo.create({ ...userData, role });
+
+  if (role === UserRole.CLIENT && clientInfo) {
+    const client = this.clientRepo.create({
+      clientType: clientInfo.type,
+      adresse: clientInfo.address,
+      user: user, // ✅ OBLIGATOIRE
+    });
+
+    user.clientInfo = client;
+  }
+
+  if (role === UserRole.PRODUCER && producteurInfo) {
+    const producteur = this.prodRepo.create({
+      ...producteurInfo,
+      user: user,
+    });
+
+    user.producteurInfo = producteur;
+  }
+
   return this.usersRepo.save(user);
 }
 
 
-  // Met à jour les infos user
-  async update(id: string, data: Partial<User>) {
-    const user = await this.findOne(id);
-    Object.assign(user, data);
-    return this.usersRepo.save(user);
-  }
+//   async create(createUserDto: CreateUserDto): Promise<User> {
+//   const { role, ...userData } = createUserDto;
+//   const user = this.usersRepo.create({ ...userData, role });
 
-  // Supprime un user (cascade sur infos)
-  async remove(id: string) {
-    const user = await this.findOne(id);
-    return this.usersRepo.remove(user);
-  }
+//   if (role === UserRole.PRODUCER && createUserDto.producteurInfo) {
+//     const producteur = this.prodRepo.create(createUserDto.producteurInfo);
+//     user.producteurInfo = producteur;
+//   } else if (role === UserRole.CLIENT && createUserDto.clientInfo) {
+//     const clientinfo = this.clientRepo.create(createUserDto.clientInfo);
+//     user.clientInfo = clientinfo;
+//   }
+
+//   return this.usersRepo.save(user);
+// }
+// ...existing code...
+
+// async create(createUserDto: CreateUserDto): Promise<User> {
+//   const { role, producteurInfo, clientInfo, ...userData } = createUserDto;
+//   const user = this.usersRepo.create({ ...userData, role }); // Only direct User properties
+
+//   if (role === UserRole.PRODUCER && producteurInfo) {
+//     const producteur = this.prodRepo.create(producteurInfo);
+//     user.producteurInfo = producteur; // Assign as single object
+//   } else if (role === UserRole.CLIENT && clientInfo) {
+//     const clientinfo = this.clientRepo.create(clientInfo);
+//     user.clientInfo = clientinfo; // Assign as single object
+// }
+//   return this.usersRepo.save(user);
+// }
+
 }
+

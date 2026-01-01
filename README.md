@@ -1,53 +1,148 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Kaay Nduggu - API Marketplace pour Légumes
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Une API REST basée sur NestJS pour un marketplace reliant producteurs et clients de légumes au Sénégal. Construite avec TypeORM, authentification JWT et validation de classe.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Fonctionnalités
 
-## Description
+- **Gestion des Utilisateurs** : Inscription et authentification pour producteurs et clients
+- **Gestion des Produits** : Les producteurs peuvent gérer leurs produits de légumes
+- **Gestion des Commandes** : Les clients peuvent passer des commandes avec des articles
+- **Authentification JWT** : Endpoints sécurisés avec accès basé sur les rôles
+- **Base de Données** : MySQL/SQLite avec entités TypeORM
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Pile Technologique
 
-## Project setup
+- **Framework** : NestJS
+- **Langage** : TypeScript
+- **Base de Données** : TypeORM avec MySQL/SQLite
+- **Authentification** : JWT avec Passport
+- **Validation** : class-validator
+- **Tests** : Jest
+
+## Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+## Configuration de l'Environnement
 
-```bash
-# development
-$ npm run start
+Créez un fichier `.env` dans le répertoire racine :
 
-# watch mode
-$ npm run start:dev
+```env
+DATABASE_TYPE=mysql
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
+DATABASE_USERNAME=votre_username
+DATABASE_PASSWORD=votre_password
+DATABASE_NAME=kaay_nduggu
 
-# production mode
-$ npm run start:prod
+JWT_SECRET=votre_jwt_secret
 ```
 
-## Run tests
+## Exécution de l'Application
 
 ```bash
-# unit tests
+# développement
+npm run start:dev
+
+# production
+npm run start:prod
+```
+
+## Endpoints API
+
+### Authentification
+- `POST /auth/login` - Connexion utilisateur
+- `POST /auth/register` - Inscription utilisateur
+
+### Utilisateurs
+- `GET /users` - Lister les utilisateurs (admin uniquement)
+- `GET /users/:id` - Obtenir un utilisateur par ID
+- `POST /users` - Créer un utilisateur (admin uniquement)
+- `PATCH /users/:id` - Mettre à jour un utilisateur
+- `DELETE /users/:id` - Supprimer un utilisateur
+
+### Produits
+- `GET /products` - Lister tous les produits
+- `GET /products/:id` - Obtenir un produit par ID
+- `POST /products` - Créer un produit (producteur uniquement)
+- `PATCH /products/:id` - Mettre à jour un produit (propriétaire uniquement)
+- `DELETE /products/:id` - Supprimer un produit (propriétaire uniquement)
+
+### Commandes
+- `GET /commandes` - Lister les commandes (client uniquement)
+- `GET /commandes/:id` - Obtenir une commande par ID
+- `POST /commandes` - Créer une commande (client uniquement)
+- `PATCH /commandes/:id` - Mettre à jour une commande (propriétaire uniquement)
+- `DELETE /commandes/:id` - Supprimer une commande (propriétaire uniquement)
+
+### Articles de Commande
+- `GET /commande-item` - Lister les articles de commande
+- `POST /commande-item` - Ajouter un article à la commande
+- `PATCH /commande-item/:id` - Mettre à jour un article de commande
+- `DELETE /commande-item/:id` - Supprimer un article de commande
+
+### Producteurs
+- `GET /producteur` - Lister les producteurs
+- `POST /producteur` - Créer un profil producteur
+- `PATCH /producteur/:id` - Mettre à jour un profil producteur
+- `DELETE /producteur/:id` - Supprimer un profil producteur
+
+### Infos Clients
+- `GET /clientinfos` - Lister les infos clients
+- `POST /clientinfos` - Créer un profil client
+- `PATCH /clientinfos/:id` - Mettre à jour un profil client
+- `DELETE /clientinfos/:id` - Supprimer un profil client
+
+## Tests
+
+```bash
+# tests unitaires
+npm run test
+
+# tests e2e
+npm run test:e2e
+
+# couverture de tests
+npm run test:cov
+```
+
+## Collection Postman
+
+Importez `Kaay_Nduggu_API.postman_collection.json` pour tester les endpoints API.
+
+## Documentation API (Swagger)
+
+La documentation interactive de l'API est disponible via Swagger à l'adresse `http://localhost:3000/api` une fois l'application démarrée.
+
+## Structure du Projet
+
+```
+src/
+├── app.module.ts
+├── main.ts
+├── auth/
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   ├── jwt-auth.guard.ts
+│   └── ...
+├── users/
+│   ├── users.controller.ts
+│   ├── users.service.ts
+│   ├── entities/
+│   └── dto/
+├── products/
+├── commandes/
+├── commande-item/
+├── producteur/
+├── clientinfos/
+└── common/
+```
+
+## Licence
+
+Ce projet est sous licence MIT.
 $ npm run test
 
 # e2e tests
